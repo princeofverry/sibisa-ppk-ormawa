@@ -5,8 +5,8 @@ import Link from "next/link";
 const Navbar = () => {
   return (
     <>
-      <div className="bottom-0 fixed w-full">
-        <div className="flex flex-row justify-around items-center gap-8 bg-blue-200">
+      <div className="bottom-0 fixed w-full p-4">
+        <div className="flex flex-row justify-center items-center space-x-8 md:space-x-48 bg-transparent">
           <Link href="/">
             <House />
           </Link>
