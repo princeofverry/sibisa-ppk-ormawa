@@ -5,8 +5,8 @@ import React from "react";
 const Auth = () => {
   return (
     <>
-      <div className="bg-[#D4D5D5] max-w-screen-sm h-screen px-4 flex flex-col">
-        <div className="text-4xl space-y-4 py-8">
+      <div className="bg-[#D4D5D5] w-full h-screen px-4 flex flex-col">
+        <div className="text-4xl space-y-4 py-8 flex flex-col justify-center max-w-screen-sm  mx-auto">
           <h1 className="font-bold">Let’s sign you in.</h1>
           <div className="text-[#3C5480]">
             <h2>Welcome back</h2>

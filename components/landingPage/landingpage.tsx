@@ -7,7 +7,7 @@ import delivery from "/public/images/delivery.png";
 const LandingPage = () => {
   return (
     <>
-      <div className="bg-[#D4D5D5] max-w-screen-sm h-screen py-8 flex flex-col items-center">
+      <div className="bg-[#D4D5D5] w-full h-screen py-8 flex flex-col justify-center items-center">
         <div className="text-center">
           <h1 className="font-bold text-2xl">Innovative Waste Management</h1>
           <h2 className="text-xl">IoT-Driven Waste Solutions</h2>
