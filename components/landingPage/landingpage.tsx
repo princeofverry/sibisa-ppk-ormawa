@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import delivery from "/public/images/delivery.png";
@@ -12,7 +13,9 @@ const LandingPage = () => {
           <h2 className="text-xl">IoT-Driven Waste Solutions</h2>
         </div>
         <Image className="py-8" src={delivery} alt="delivery" />
-        <Button className="px-16 rounded-2xl bg-[#3C5480]">Next</Button>
+        <Link href="/auth">
+          <Button className="px-16 rounded-2xl bg-[#3C5480]">Next</Button>
+        </Link>
       </div>
     </>
   );
