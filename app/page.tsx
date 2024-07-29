@@ -17,7 +17,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#3C5480]">
+      <div className="flex flex-col items-center justify-center h-screen w-full bg-[#3C5480]">
         <Image
           alt="logo"
           src={logo}
