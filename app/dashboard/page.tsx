@@ -2,8 +2,9 @@
 import React, { useState, ChangeEvent } from "react";
 import writing from "/public/images/writing.png";
 import Image from "next/image";
-import { Pencil, Search, Trash, UserRound } from "lucide-react";
+import { Pencil, Plus, Search, Trash, UserRound } from "lucide-react";
 import dummyNames from "@/lib/constant/name";
+import Link from "next/link";
 
 interface NameItem {
   name: string;
@@ -49,10 +50,12 @@ const Dashboard: React.FC = () => {
               className="py-3 w-72 px-2 bg-[#BACC58] rounded-xl text-white mb-4"
             >
               <div className="flex flex-row justify-between">
-                <div className="flex flex-row justify-center gap-2">
-                  <UserRound />
-                  <h1>{item.name}</h1>
-                </div>
+                <Link href={`dashboard/${item.name}`}>
+                  <div className="flex flex-row justify-center gap-2">
+                    <UserRound />
+                    <h1>{item.name}</h1>
+                  </div>
+                </Link>
                 <div className="flex flex-row justify-center gap-2">
                   <Pencil />
                   <Trash />
@@ -60,6 +63,12 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className="w-72">
+          <Plus
+            color="#ffffff"
+            className="w-8 h-8 rounded-full bg-[#BACC58] mx-auto my-4 mr-0"
+          />
         </div>
       </div>
     </div>
