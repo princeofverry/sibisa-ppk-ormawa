@@ -13,7 +13,6 @@ import {
   PointElement,
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
-import Navbar from "@/components/navbar/navbar";
 
 // Register chart components
 ChartJS.register(
@@ -102,7 +101,6 @@ const TemperatureMonitor: React.FC = () => {
           <Line data={humidityData} options={options} />
         </div>
       </div>
-      <Navbar />
     </div>
   );
 };
