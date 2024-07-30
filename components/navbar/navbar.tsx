@@ -7,13 +7,13 @@ const Navbar = () => {
     <>
       <div className="bottom-0 fixed w-full p-4 z-10">
         <div className="flex flex-row justify-center items-center space-x-8 md:space-x-32 bg-transparent">
-          <Link href="/">
+          <Link href="/dashboard">
             <div className="flex flex-col items-center">
               <House />
-              House
+              Home
             </div>
           </Link>
-          <Link href="/monitoring">
+          <Link href="/dashboard/monitoring">
             <div className="flex flex-col items-center">
               <Activity />
               Monitoring
