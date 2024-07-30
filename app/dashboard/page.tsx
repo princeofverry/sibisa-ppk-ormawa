@@ -57,7 +57,6 @@ const Dashboard: React.FC = () => {
                   </div>
                 </Link>
                 <div className="flex flex-row justify-center gap-2">
-                  <Pencil />
                   <Trash />
                 </div>
               </div>
