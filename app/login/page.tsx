@@ -43,12 +43,6 @@ const Auth = () => {
           >
             Login
           </Button>
-          <Button
-            formAction={signup}
-            className="px-16 mt-4 rounded-2xl bg-[#3C5480]"
-          >
-            Sign up
-          </Button>
         </form>
         <h2 className="text-[#3C5480] self-center mb-4">Login as guest</h2>
       </div>
