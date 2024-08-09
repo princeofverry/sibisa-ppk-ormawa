@@ -1,6 +1,7 @@
 import React from "react";
-import { Activity, Compass, House } from "lucide-react";
+import { Activity, Compass, House, LogOutIcon } from "lucide-react";
 import Link from "next/link";
+import { logout } from "@/app/logout/actions";
 
 const Navbar = () => {
   return (
@@ -25,6 +26,10 @@ const Navbar = () => {
               Explore
             </div>
           </Link>
+          <form action={logout} className="flex flex-col items-center">
+            <LogOutIcon />
+            <button type="submit">logout</button>
+          </form>
         </div>
       </div>
     </>

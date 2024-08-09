@@ -13,7 +13,7 @@ const LandingPage = () => {
           <h2 className="text-xl">IoT-Driven Waste Solutions</h2>
         </div>
         <Image className="py-8" src={delivery} alt="delivery" />
-        <Link href="/auth">
+        <Link href="/login">
           <Button className="px-16 rounded-2xl bg-[#3C5480]">Next</Button>
         </Link>
       </div>
