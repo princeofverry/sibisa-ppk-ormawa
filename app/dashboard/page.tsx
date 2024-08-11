@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Search, Trash, UserRound } from "lucide-react";
 import Link from "next/link";
 import FormWithPopover from "@/components/form/form";
+import { ConfirmDeleteModal } from "@/components/deleteModals/DeleteModals";
 
 interface User {
   id: string;
@@ -17,14 +18,14 @@ const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("/api/users");
-        console.log("API Response:", response);
         const result = await response.json();
-        console.log("Fetched Data:", result);
         setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -34,7 +35,28 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
+    const intervalId = setInterval(fetchData, 1000); // Polling setiap 5 detik
+
+    return () => clearInterval(intervalId);
   }, []);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        // id sudah otomatis menjadi string dalam URL
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setData(data.filter((item) => item.id !== id));
+        setIsModalOpen(false);
+      } else {
+        console.error("Failed to delete user");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -85,7 +107,12 @@ const Dashboard: React.FC = () => {
                     </div>
                   </Link>
                   <div className="flex flex-row justify-center gap-2">
-                    <Trash />
+                    <Trash
+                      onClick={() => {
+                        setSelectedUserId(item.id);
+                        setIsModalOpen(true);
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -96,6 +123,15 @@ const Dashboard: React.FC = () => {
           <FormWithPopover />
         </div>
       </div>
+      <ConfirmDeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={() => {
+          if (selectedUserId !== null) {
+            handleDelete(selectedUserId);
+          }
+        }}
+      />
     </div>
   );
 };
