@@ -9,7 +9,7 @@ import FormWithPopover from "@/components/form/form";
 import { ConfirmDeleteModal } from "@/components/deleteModals/DeleteModals";
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   numberPhone: string;
 }
