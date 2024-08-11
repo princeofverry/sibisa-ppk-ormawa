@@ -2,10 +2,10 @@
 
 import { Phone, UserRound, WeightIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import looking from "/public/images/looking.png";
-import dummyNames from "@/lib/constant/name";
 import { Button } from "@/components/ui/button";
+import { User } from "@prisma/client";
 
 interface DetailPageProps {
   params: {
@@ -19,30 +19,50 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
   // Decode the slug to handle cases like "Joko%20Khannedy"
   const decodedSlug = decodeURIComponent(slug);
 
-  // Find the user information based on the decoded slug
-  const [user, setUser] = useState(
-    dummyNames.find(
-      (person) => person.name.toLowerCase() === decodedSlug.toLowerCase()
-    )
-  );
-
-  const [amount, setAmount] = useState(user?.amount || 0);
+  const [user, setUser] = useState<User | null>(null);
+  const [amount, setAmount] = useState<number>(0);
   const [inputValue, setInputValue] = useState("");
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    // Fetch user data from the API
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/api/users/${decodedSlug}`);
+        const data = await response.json();
+        if (response.ok) {
+          setUser(data);
+          setAmount(data.beratSampah || 0);
+        } else {
+          console.error(data.error);
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [decodedSlug]);
+
+  const handleSubmit = async () => {
     const newAmount = parseFloat(inputValue);
     if (!isNaN(newAmount) && newAmount >= 0) {
       setAmount(newAmount);
-      // Update the user in dummyNames
       if (user) {
-        const updatedUser = { ...user, amount: newAmount };
+        const updatedUser = { ...user, beratSampah: newAmount };
         setUser(updatedUser);
-        // This part is just to reflect changes in the state. You might want to handle updates differently based on your actual data management approach.
-        const index = dummyNames.findIndex(
-          (person) => person.name.toLowerCase() === decodedSlug.toLowerCase()
-        );
-        if (index !== -1) {
-          dummyNames[index] = updatedUser;
+
+        try {
+          await fetch(`/api/users/${user.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedUser),
+          });
+        } catch (error) {
+          console.error("Failed to update user", error);
         }
       }
     } else {
@@ -71,7 +91,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
               <div className="py-3 w-72 px-2 bg-[#3C5480] rounded-xl text-white mb-4">
                 <div className="flex flex-row gap-2">
                   <Phone />
-                  <h1>{user.phone}</h1>
+                  <h1>{user.numberPhone}</h1>
                 </div>
               </div>
               <div>
