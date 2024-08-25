@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "/public/images/logo-sibisa.png";
-import LoginPage from "@/components/loginPage/loginpage";
 import LandingPage from "@/components/landingPage/landingpage";
 import SelamatDatang from "@/components/selamatDatang/selamat-datang";
 

@@ -20,7 +20,7 @@ const Navbar = () => {
               Monitoring
             </div>
           </Link>
-          <Link href="/explore">
+          <Link href="/">
             <div className="flex flex-col items-center">
               <Compass />
               Explore
