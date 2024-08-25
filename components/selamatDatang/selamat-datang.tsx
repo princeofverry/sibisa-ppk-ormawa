@@ -1,12 +1,11 @@
 import Image from "next/image";
 import React from "react";
 import gambar from "/public/images/sibisa.jpg";
-import logo from "/public/images/logo-sibisa.png";
 
 const SelamatDatang = () => {
   return (
-    <div>
-      <div className=" mx-auto flex items-center w-10/12 mb-4">
+    <div className="mb-8">
+      <div className="mx-auto flex items-center w-10/12 my-8">
         <div className="border-t-4 border-[#BF5638] w-9/12"></div>
         <div className="border-t-4 border-transparent w-1/12"></div>
         <div className="border-t-4 border-[#BF5638] w-2/12"></div>
