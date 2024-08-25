@@ -3,14 +3,16 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "/public/images/logo-sibisa.png";
 import LandingPage from "@/components/landingPage/landingpage";
+import SelamatDatang from "@/components/selamatDatang/selamat-datang";
+import About from "@/components/about/about";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // jadiin false dlu
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -49,7 +51,10 @@ export default function Home() {
 
   return (
     <>
+      {/* <LoginPage /> */}
       <LandingPage />
+      <SelamatDatang />
+      <About />
     </>
   );
 }
