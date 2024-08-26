@@ -5,6 +5,7 @@ import logo from "/public/images/logo-sibisa.png";
 import LandingPage from "@/components/landingPage/landingpage";
 import SelamatDatang from "@/components/selamatDatang/selamat-datang";
 import About from "@/components/about/about";
+import Memilah from "@/components/memilah/memilah";
 
 export default function Home() {
   const [loading, setLoading] = useState(false); // jadiin false dlu
@@ -55,6 +56,7 @@ export default function Home() {
       <LandingPage />
       <SelamatDatang />
       <About />
+      <Memilah />
     </>
   );
 }
