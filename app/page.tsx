@@ -10,6 +10,8 @@ import Memilah from "@/components/memilah/memilah";
 import AOS from "aos";
 
 import "aos/dist/aos.css";
+import Denah from "@/components/denah/denah";
+import AkhirKata from "@/components/akhirKata/akhir-kata";
 
 export default function Home() {
   const [loading, setLoading] = useState(false); // jadiin false dlu
@@ -68,6 +70,8 @@ export default function Home() {
       <SelamatDatang />
       <About />
       <Memilah />
+      <Denah />
+      <AkhirKata />
     </>
   );
 }

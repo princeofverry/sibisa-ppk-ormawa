@@ -22,7 +22,7 @@ const SelamatDatang = () => {
           berkolaborasi dengan masyarakat untuk merumuskan solusi melalui
           program pembentukan Rumah Sampah Digital.
         </p>
-        <Image src={gambar} alt="gambar" width={700} className="rounded-xl" />
+        <Image src={gambar} alt="gambar" width={550} className="rounded-xl" />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import city from "/public/images/city.png";
 const LandingPage = () => {
   return (
     <div
-      className="h-screen w-full bg-[#EBFFFF] flex flex-col justify-center bg-contain"
+      className="h-screen w-full bg-[#EBFFFF] flex flex-col justify-center bg-cover"
       style={{
         backgroundImage: `url(${city.src})`,
       }}
