@@ -73,10 +73,7 @@ export default function Home() {
       <Memilah />
       <Denah />
       <AkhirKata />
-<<<<<<< HEAD
       <Footer />
-=======
->>>>>>> 6d644b9e4466ce20d7d1025048638d9f08418079
     </>
   );
 }
