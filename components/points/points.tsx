@@ -35,13 +35,13 @@ const points: Point[] = [
 ];
 
 const Points = () => (
-  <div className="flex flex-row text-2xl text-[#3C5480] items-center justify-center text-justify">
-    <Image src={farmer} alt="farmer" width={350} className="bg-blue-400" />
-    <div className="mt-16 flex flex-col items-start">
+  <div className="flex flex-row text-2xl text-[#3C5480] text-justify  justify-center">
+    <Image src={farmer} alt="farmer" width={400} />
+    <div className="mt-16 w-7/12  flex flex-col justify-start ">
       <p className="mb-8">
         Pembuatan pupuk organik dari kotoran sapi dapat dilakukan dengan :
       </p>
-      <div className="w-9/12 space-y-8">
+      <div className="space-y-8">
         {points.map((point, index) => (
           <div
             key={index}
