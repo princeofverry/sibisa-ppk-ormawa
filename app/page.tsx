@@ -12,6 +12,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Denah from "@/components/denah/denah";
 import AkhirKata from "@/components/akhirKata/akhir-kata";
+import Footer from "@/components/footer/footer";
 
 export default function Home() {
   const [loading, setLoading] = useState(false); // jadiin false dlu
@@ -72,6 +73,7 @@ export default function Home() {
       <Memilah />
       <Denah />
       <AkhirKata />
+      <Footer />
     </>
   );
 }
