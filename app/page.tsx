@@ -5,9 +5,23 @@ import logo from "/public/images/logo-sibisa.png";
 import LandingPage from "@/components/landingPage/landingpage";
 import SelamatDatang from "@/components/selamatDatang/selamat-datang";
 import About from "@/components/about/about";
+import Memilah from "@/components/memilah/memilah";
+
+import AOS from "aos";
+
+import "aos/dist/aos.css";
+import Denah from "@/components/denah/denah";
+import AkhirKata from "@/components/akhirKata/akhir-kata";
 
 export default function Home() {
   const [loading, setLoading] = useState(false); // jadiin false dlu
+  useEffect(() => {
+    AOS.init({
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 50,
+    });
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,6 +69,9 @@ export default function Home() {
       <LandingPage />
       <SelamatDatang />
       <About />
+      <Memilah />
+      <Denah />
+      <AkhirKata />
     </>
   );
 }
