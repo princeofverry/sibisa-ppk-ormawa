@@ -83,22 +83,45 @@ const options: ChartOptions<"line"> = {
   },
 };
 
+// Fungsi untuk menghitung nilai rata-rata
+const calculateAverage = (data: number[]): number => {
+  const sum = data.reduce((acc, value) => acc + value, 0);
+  return parseFloat((sum / data.length).toFixed(2));
+};
+
 const TemperatureMonitor: React.FC = () => {
+  const avgTemperature = calculateAverage(
+    temperatureData.datasets[0].data as number[]
+  );
+  const avgHumidity = calculateAverage(
+    humidityData.datasets[0].data as number[]
+  );
+
   return (
-    <div>
-      <div className="p-4 bg-white rounded-lg shadow-md w-full max-w-md mx-auto">
-        <h2 className="text-xl font-semibold mb-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="w-full max-w-xl bg-white rounded-lg shadow-md p-4 md:p-6">
+        <h2 className="text-lg md:text-xl font-semibold mb-4 text-center">
           Grafik Monitoring Suhu dan Kelembapan
         </h2>
 
         {/* Grafik Suhu */}
-        <div className="w-full h-60 mb-6">
-          <Line data={temperatureData} options={options} />
+        <div className="mb-6">
+          <div className="h-40 md:h-60">
+            <Line data={temperatureData} options={options} />
+          </div>
+          <p className="text-center mt-2 text-sm md:text-base">
+            Rata-rata Suhu: {avgTemperature}°C
+          </p>
         </div>
 
         {/* Grafik Kelembapan */}
-        <div className="w-full h-60">
-          <Line data={humidityData} options={options} />
+        <div>
+          <div className="h-40 md:h-60">
+            <Line data={humidityData} options={options} />
+          </div>
+          <p className="text-center mt-2 text-sm md:text-base">
+            Rata-rata Kelembapan: {avgHumidity}%
+          </p>
         </div>
       </div>
     </div>
