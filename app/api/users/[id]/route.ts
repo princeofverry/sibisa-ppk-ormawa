@@ -36,19 +36,46 @@ export async function PUT(
 
   try {
     const body = await request.json();
-    const { beratSampah } = body;
+    const { besi, kaca, kertas, plastik, sterofoam } = body;
 
     // Validasi input
-    if (typeof beratSampah !== "number" || beratSampah < 0) {
+    if (
+      typeof besi !== "number" ||
+      typeof kaca !== "number" ||
+      typeof kertas !== "number" ||
+      typeof plastik !== "number" ||
+      typeof sterofoam !== "number" ||
+      besi < 0 ||
+      kaca < 0 ||
+      kertas < 0 ||
+      plastik < 0 ||
+      sterofoam < 0
+    ) {
       return NextResponse.json(
-        { error: "Invalid value for beratSampah" },
+        { error: "Invalid values for waste types" },
         { status: 400 }
       );
     }
 
+    const totalWeight = besi + kaca + kertas + plastik + sterofoam;
+    const totalPoints =
+      besi * 5000 +
+      kaca * 4000 +
+      kertas * 3000 +
+      plastik * 2000 +
+      sterofoam * 1000;
+
     const updatedUser = await prisma.user.update({
       where: { id: parseInt(id) },
-      data: { beratSampah },
+      data: {
+        besi,
+        kaca,
+        kertas,
+        plastik,
+        sterofoam,
+        totalWeight,
+        totalPoints,
+      },
     });
 
     return NextResponse.json(updatedUser);
