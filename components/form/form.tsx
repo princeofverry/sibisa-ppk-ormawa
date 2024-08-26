@@ -8,7 +8,6 @@ export default function FormWithPopover() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [weight, setWeight] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -18,7 +17,6 @@ export default function FormWithPopover() {
     if (!name) newErrors.push("Name is required.");
     if (!email) newErrors.push("Email is required.");
     if (!phoneNumber) newErrors.push("Phone number is required.");
-    if (!weight) newErrors.push("Weight is required.");
 
     if (newErrors.length > 0) {
       setErrors(newErrors);
@@ -30,12 +28,10 @@ export default function FormWithPopover() {
         name,
         email,
         numberPhone: phoneNumber,
-        beratSampah: Number(weight),
       });
       setName("");
       setEmail("");
       setPhoneNumber("");
-      setWeight("");
       setIsOpen(false);
       setErrors([]);
       // Optional: Trigger a refetch or state update if needed
@@ -105,23 +101,11 @@ export default function FormWithPopover() {
                 placeholder="Enter your phone number"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Berat Sampah (kg)
-              </label>
-              <input
-                type="number"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md px-2 shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                placeholder="Enter weight in kg"
-              />
-            </div>
             <button
               type="submit"
-              disabled={!name || !email || !phoneNumber || !weight}
+              disabled={!name || !email || !phoneNumber}
               className={`w-full py-2 rounded-md text-white focus:outline-none ${
-                !name || !email || !phoneNumber || !weight
+                !name || !email || !phoneNumber
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:ring-opacity-50"
               }`}

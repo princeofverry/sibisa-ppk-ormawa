@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import type { User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -22,12 +21,18 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Memastikan body memiliki struktur yang benar
     const userData = {
       name: body.name,
       numberPhone: body.numberPhone,
       email: body.email,
-      beratSampah: body.beratSampah,
+      beratSampah: 0,
+      besi: body.besi ?? 0,
+      kaca: body.kaca ?? 0,
+      kertas: body.kertas ?? 0,
+      plastik: body.plastik ?? 0,
+      sterofoam: body.sterofoam ?? 0,
+      totalWeight: body.totalWeight ?? 0,
+      totalPoints: body.totalPoints ?? 0,
     };
 
     const user = await prisma.user.create({
