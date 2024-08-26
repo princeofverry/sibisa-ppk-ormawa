@@ -7,8 +7,19 @@ import SelamatDatang from "@/components/selamatDatang/selamat-datang";
 import About from "@/components/about/about";
 import Memilah from "@/components/memilah/memilah";
 
+import AOS from "aos";
+
+import "aos/dist/aos.css";
+
 export default function Home() {
   const [loading, setLoading] = useState(false); // jadiin false dlu
+  useEffect(() => {
+    AOS.init({
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 50,
+    });
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {

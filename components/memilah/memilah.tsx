@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import accordionData from "@/lib/constant/accordion";
 import Box3R from "../box/box";
+import Points from "../points/points";
 
 const memilah = () => {
   return (
@@ -72,6 +73,7 @@ const memilah = () => {
           fungsikan menjadi pupuk yang bermanfaat untuk pertumbuhan tanaman.
         </p>
       </div>
+      <Points />
     </>
   );
 };

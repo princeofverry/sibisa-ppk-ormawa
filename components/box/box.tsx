@@ -5,10 +5,12 @@ import element from "/public/images/element-titik.png";
 const Box3R = () => {
   return (
     <>
-      <div className="relative flex md:flex-row flex-col justify-evenly items-center md:-space-x-16">
+      <div className="relative flex md:flex-row flex-col justify-evenly items-center">
         <Image
           src={element}
           alt="titik"
+          height={50}
+          width={330}
           className="absolute left-0 top-0 z-0"
         />
         <div className="bg-white text-[#3C5480] w-80 h-80 space-y-4 shadow-2xl px-6 py-16 rounded-2xl z-10">
