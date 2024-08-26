@@ -9,10 +9,14 @@ const NavbarDesktop = () => {
   const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
+    const isDashboardSlug =
+      pathname.startsWith("/dashboard/") && pathname.split("/").length === 3;
+
     if (
       pathname === "/dashboard" ||
       pathname === "/dashboard/monitoring" ||
-      pathname === "/login"
+      pathname === "/login" ||
+      isDashboardSlug
     ) {
       setShouldRender(false);
     } else {
