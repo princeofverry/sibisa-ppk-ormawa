@@ -15,7 +15,6 @@ import { ChartData, ChartOptions } from "chart.js";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, remove, get } from "firebase/database";
 import "chartjs-adapter-date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -123,8 +122,10 @@ const TemperatureMonitor: React.FC = () => {
   const [lastFertilizerTime, setLastFertilizerTime] = useState<number | null>(
     null
   );
+  const [lastFertilizerDate, setLastFertilizerDate] = useState<string | null>(
+    null
+  );
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const storedFertilizerTime = localStorage.getItem("lastFertilizerTime");
@@ -134,6 +135,7 @@ const TemperatureMonitor: React.FC = () => {
 
       if (Date.now() < countdownEnd) {
         setLastFertilizerTime(lastFertilizerTimeMillis);
+        setLastFertilizerDate(formatDate(lastFertilizerTimeMillis));
       } else {
         localStorage.removeItem("lastFertilizerTime");
         setIsPopupOpen(true);
@@ -235,12 +237,11 @@ const TemperatureMonitor: React.FC = () => {
   }, [lastFertilizerTime]);
 
   const handleFertilizerSubmit = () => {
-    if (selectedDate) {
-      const now = selectedDate.getTime();
-      setLastFertilizerTime(now);
-      localStorage.setItem("lastFertilizerTime", now.toString());
-      setIsPopupOpen(false);
-    }
+    const now = Date.now();
+    setLastFertilizerTime(now);
+    setLastFertilizerDate(formatDate(now));
+    localStorage.setItem("lastFertilizerTime", now.toString());
+    setIsPopupOpen(false);
   };
 
   const avgTemperature = calculateAverage(
@@ -276,69 +277,43 @@ const TemperatureMonitor: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
       <div className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center mb-4">
-          Monitoring Suhu dan Kelembapan
+          Monitor Suhu dan Kelembapan
         </h1>
-        {/* Button to open the fertilizer popup manually */}
-        <div className="flex flex-col items-center justify-center">
-          <Button
-            className="mb-4  justify-center"
-            onClick={() => setIsPopupOpen(true)}
-          >
-            Pengisian Pupuk
-          </Button>
-        </div>
-
-        {/* Display selected fertilizer date */}
-        {lastFertilizerTime && (
-          <p className="mb-4 text-gray-600">
-            Tanggal pengisian pupuk terakhir:{" "}
-            <span className="font-semibold">
-              {formatDate(lastFertilizerTime)}
-            </span>
-          </p>
-        )}
-
-        <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Pengisian Pupuk</DialogTitle>
-              <DialogDescription>
-                Silakan pilih tanggal pengisian pupuk untuk memulai countdown 3
-                hari.
-              </DialogDescription>
-            </DialogHeader>
-
-            <Calendar
-              mode="single"
-              selected={selectedDate ? selectedDate : null} // Ensure selectedDate is a Date object or null
-              onSelect={
-                (date: Date | null) => setSelectedDate(date) // Directly use Date object or null
-              }
-              initialFocus
-            />
-
-            <div className="flex justify-end mt-4">
-              <Button onClick={handleFertilizerSubmit} disabled={!selectedDate}>
-                Submit
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">
-            Suhu Rata-Rata: {avgTemperature} °C
-          </h3>
+          <h2 className="text-xl font-semibold mb-2">Grafik Suhu</h2>
           <Line data={tempChartData} options={options} />
         </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-2">
-            Kelembapan Rata-Rata: {avgHumidity} %
-          </h3>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Grafik Kelembapan</h2>
           <Line data={humidityChartData} options={options} />
         </div>
+        <div className="flex justify-between text-lg mb-4">
+          <span>Rata-rata Suhu: {avgTemperature}°C</span>
+          <span>Rata-rata Kelembapan: {avgHumidity}%</span>
+        </div>
+        {lastFertilizerDate && (
+          <div className="text-lg mb-4">
+            <span>Pengisian Pupuk Terakhir: {lastFertilizerDate}</span>
+          </div>
+        )}
       </div>
+
+      <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pengingat Pengisian Pupuk</DialogTitle>
+            <DialogDescription>
+              Waktu pengisian pupuk telah berakhir. Silakan isi pupuk untuk
+              memulai periode baru.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleFertilizerSubmit} variant="default">
+              Isi Pupuk
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
