@@ -10,7 +10,7 @@ const Navbar = () => {
 
   // Tentukan kelas berdasarkan URL
   const navbarClassName = pathname.startsWith("/dashboard/")
-    ? "sticky bottom-0 w-full p-4 z-10 bg-transparent"
+    ? "sticky bottom-0 w-full p-4 z-10 bg-white"
     : "fixed bottom-0 w-full p-4 z-10 bg-transparent";
 
   return (
