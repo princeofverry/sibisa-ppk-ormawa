@@ -8,6 +8,7 @@ import Link from "next/link";
 import FormWithPopover from "@/components/form/form";
 import { ConfirmDeleteModal } from "@/components/deleteModals/DeleteModals";
 import logo from "/public/images/logo-sibisa.png";
+import * as XLSX from "xlsx";
 
 interface User {
   id: number;
@@ -36,7 +37,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-    const intervalId = setInterval(fetchData, 1000); // Polling setiap 5 detik
+    const intervalId = setInterval(fetchData, 1000); // Polling setiap 1 detik
 
     return () => clearInterval(intervalId);
   }, []);
@@ -44,7 +45,6 @@ const Dashboard: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`/api/users/${id}`, {
-        // id sudah otomatis menjadi string dalam URL
         method: "DELETE",
       });
 
@@ -67,10 +67,27 @@ const Dashboard: React.FC = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const exportToExcel = (data: any) => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+    XLSX.writeFile(workbook, "users_data.xlsx");
+  };
+
   return (
     <div className="bg-[#D4D5D5] h-screen w-full px-4">
       <div className="flex flex-row items-center justify-center md:space-x-56 space-x-8">
-        <h1 className="font-bold md:text-4xl text-2xl">Hi, Admin!</h1>
+        <div>
+          <h1 className="font-bold md:text-4xl text-2xl">Hi, Admin!</h1>
+          <div className="flex flex-col items-center mt-4">
+            <button
+              onClick={() => exportToExcel(data)}
+              className="bg-[#BACC58] text-white rounded-xl py-2 px-4"
+            >
+              Download Excel
+            </button>
+          </div>
+        </div>
         <Image src={logo} alt="Writing" width={200} />
       </div>
       <div className="flex flex-col items-center">
