@@ -6,13 +6,13 @@ const About = () => {
   return (
     <>
       <div className="bg-[#C9FFFF]">
-        <div className="flex flex-row justify-center items-center">
+        <div className="flex md:flex-row flex-col justify-center items-center">
           <Image src={logo} alt="logo" width={400} />
-          <div className="text-[#3C5480] w-1/2 space-y-12">
-            <h1 className="font-medium text-4xl">
+          <div className="text-[#3C5480] md:w-1/2 md:px-0 px-4 space-y-12">
+            <h1 className="text-center md:text-left font-medium text-4xl">
               Tentang <span className="font-bold">SIBISA</span>
             </h1>
-            <p className="text-2xl text-pretty text-justify w-full">
+            <p className="md:text-2xl text-lg text-pretty text-justify w-full">
               SIBISA adalah program berbasis IoT yang dirancang dengan cinta dan
               dedikasi untuk mengelola limbah di Desa Sriwulan. Aplikasi ini
               memonitor pengelolaan limbah anorganik dan fermentasi pupuk kompos

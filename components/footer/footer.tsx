@@ -4,7 +4,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <div className="bg-[#232D40] text-[#D4D5D5] flex flex-row justify-evenly py-4">
+      <div className="bg-[#232D40] text-[#D4D5D5] flex lg:flex-row flex-col justify-evenly py-4">
         <div>
           <div className="space-y-2">
             <h1 className="font-bold text-3xl">DESA SRIWULAN</h1>
@@ -34,7 +34,7 @@ const Footer = () => {
         </div>
         <div>
           <h1 className="text-lg font-bold mb-2">LOCATION</h1>
-          <div className="max-w-full overflow-hidden text-[#D4D5D5] w-[500px] h-[160px] rounded-xl">
+          <div className="max-w-full overflow-hidden text-[#D4D5D5] md:w-[500px] h-[160px] rounded-xl">
             <div id="embedded-map-display" className="h-full w-full max-w-full">
               <iframe
                 className="h-full w-full border-0"
