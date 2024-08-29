@@ -15,6 +15,15 @@ import { ChartData, ChartOptions } from "chart.js";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, remove, get } from "firebase/database";
 import "chartjs-adapter-date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -94,6 +103,16 @@ const calculateAverage = (data: number[]): number => {
   return parseFloat((sum / data.length).toFixed(2));
 };
 
+const formatDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const TemperatureMonitor: React.FC = () => {
   const [temperatureData, setTemperatureData] = useState<
     { x: number; y: number }[]
@@ -101,6 +120,28 @@ const TemperatureMonitor: React.FC = () => {
   const [humidityData, setHumidityData] = useState<{ x: number; y: number }[]>(
     []
   );
+  const [lastFertilizerTime, setLastFertilizerTime] = useState<number | null>(
+    null
+  );
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const storedFertilizerTime = localStorage.getItem("lastFertilizerTime");
+    if (storedFertilizerTime) {
+      const lastFertilizerTimeMillis = parseInt(storedFertilizerTime, 10);
+      const countdownEnd = lastFertilizerTimeMillis + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+
+      if (Date.now() < countdownEnd) {
+        setLastFertilizerTime(lastFertilizerTimeMillis);
+      } else {
+        localStorage.removeItem("lastFertilizerTime");
+        setIsPopupOpen(true);
+      }
+    } else {
+      setIsPopupOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     const sensorDataRef = ref(database, "/sensorData");
@@ -157,9 +198,6 @@ const TemperatureMonitor: React.FC = () => {
             }
           });
 
-          console.log("Filtered Temperature Data:", filteredTemperatureData);
-          console.log("Filtered Humidity Data:", filteredHumidityData);
-
           setTemperatureData(filteredTemperatureData);
           setHumidityData(filteredHumidityData);
         } else {
@@ -171,6 +209,39 @@ const TemperatureMonitor: React.FC = () => {
       }
     );
   }, []);
+
+  useEffect(() => {
+    if (lastFertilizerTime) {
+      const countdownEnd = lastFertilizerTime + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+      const intervalId = setInterval(() => {
+        const remainingTime = countdownEnd - Date.now();
+        console.log(
+          `Countdown: ${Math.max(remainingTime / 1000, 0).toFixed(0)} seconds`
+        );
+
+        if (remainingTime <= 0) {
+          // Hapus semua data setelah 3 hari
+          setTemperatureData([]);
+          setHumidityData([]);
+          setLastFertilizerTime(null);
+          localStorage.removeItem("lastFertilizerTime");
+          setIsPopupOpen(true);
+          clearInterval(intervalId);
+        }
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [lastFertilizerTime]);
+
+  const handleFertilizerSubmit = () => {
+    if (selectedDate) {
+      const now = selectedDate.getTime();
+      setLastFertilizerTime(now);
+      localStorage.setItem("lastFertilizerTime", now.toString());
+      setIsPopupOpen(false);
+    }
+  };
 
   const avgTemperature = calculateAverage(
     temperatureData.map((data) => data.y)
@@ -203,27 +274,67 @@ const TemperatureMonitor: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="w-full max-w-xl bg-white rounded-lg shadow-md p-4 md:p-6">
-        <h2 className="text-lg md:text-xl font-semibold mb-4 text-center">
-          Grafik Monitoring Suhu dan Kelembapan
-        </h2>
+      <div className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center mb-4">
+          Monitoring Suhu dan Kelembapan
+        </h1>
+        {/* Button to open the fertilizer popup manually */}
+        <div className="flex flex-col items-center justify-center">
+          <Button
+            className="mb-4  justify-center"
+            onClick={() => setIsPopupOpen(true)}
+          >
+            Pengisian Pupuk
+          </Button>
+        </div>
+
+        {/* Display selected fertilizer date */}
+        {lastFertilizerTime && (
+          <p className="mb-4 text-gray-600">
+            Tanggal pengisian pupuk terakhir:{" "}
+            <span className="font-semibold">
+              {formatDate(lastFertilizerTime)}
+            </span>
+          </p>
+        )}
+
+        <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Pengisian Pupuk</DialogTitle>
+              <DialogDescription>
+                Silakan pilih tanggal pengisian pupuk untuk memulai countdown 3
+                hari.
+              </DialogDescription>
+            </DialogHeader>
+
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              initialFocus
+            />
+
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleFertilizerSubmit} disabled={!selectedDate}>
+                Submit
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="mb-6">
-          <div className="h-40 md:h-60">
-            <Line data={tempChartData} options={options} />
-          </div>
-          <p className="text-center mt-2 text-sm md:text-base">
-            Rata-rata Suhu: {avgTemperature}°C
-          </p>
+          <h3 className="text-lg font-semibold mb-2">
+            Suhu Rata-Rata: {avgTemperature} °C
+          </h3>
+          <Line data={tempChartData} options={options} />
         </div>
 
         <div>
-          <div className="h-40 md:h-60">
-            <Line data={humidityChartData} options={options} />
-          </div>
-          <p className="text-center mt-2 text-sm md:text-base">
-            Rata-rata Kelembapan: {avgHumidity}%
-          </p>
+          <h3 className="text-lg font-semibold mb-2">
+            Kelembapan Rata-Rata: {avgHumidity} %
+          </h3>
+          <Line data={humidityChartData} options={options} />
         </div>
       </div>
     </div>

@@ -28,12 +28,6 @@ const Navbar = () => {
             Monitoring
           </div>
         </Link>
-        <Link href="/">
-          <div className="flex flex-col items-center">
-            <Compass />
-            Menjelajah
-          </div>
-        </Link>
         <form action={logout} className="flex flex-col items-center">
           <LogOutIcon />
           <button type="submit">Keluar</button>
