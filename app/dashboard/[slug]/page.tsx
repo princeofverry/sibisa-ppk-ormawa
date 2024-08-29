@@ -64,31 +64,38 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
 
   const handleSubmit = async () => {
     if (user) {
-      // Update total weight and points with the new values
-      const updatedUser = {
-        ...user,
-        totalWeight: (user.totalWeight || 0) + calculateTotalWeight(),
-        totalPoints: (user.totalPoints || 0) + calculateTotalPoints(),
+      // Mengirim data yang hanya terkait dengan jenis sampah ke server
+      const updatedData = {
+        besi,
+        kaca,
+        kertas,
+        plastik,
+        sterofoam,
       };
 
       try {
-        await fetch(`/api/users/${user.id}`, {
+        const response = await fetch(`/api/users/${user.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedUser),
+          body: JSON.stringify(updatedData),
         });
 
-        // Reset the input fields to 0 after successful submission
+        if (response.ok) {
+          const updatedUser = await response.json();
+          // Update state user dengan data yang baru di-fetch dari server
+          setUser(updatedUser);
+        } else {
+          console.error("Failed to update user", await response.json());
+        }
+
+        // Reset input fields
         setBesi(0);
         setKaca(0);
         setKertas(0);
         setPlastik(0);
         setSterofoam(0);
-
-        // Update user data in the state with the new total weight and points
-        setUser(updatedUser);
       } catch (error) {
         console.error("Failed to update user", error);
       }

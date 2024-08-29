@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
               onClick={() => exportToExcel(data)}
               className="bg-[#BACC58] text-white rounded-xl py-2 px-4"
             >
-              Download Excel
+              Download Data
             </button>
           </div>
         </div>
