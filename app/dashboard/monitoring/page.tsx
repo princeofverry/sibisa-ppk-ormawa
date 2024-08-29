@@ -93,15 +93,6 @@ const options: ChartOptions<"line"> = {
   },
 };
 
-const calculateAverage = (data: number[]): number => {
-  if (!Array.isArray(data) || data.length === 0) {
-    return 0;
-  }
-
-  const sum = data.reduce((acc, value) => acc + value, 0);
-  return parseFloat((sum / data.length).toFixed(2));
-};
-
 const formatDate = (timestamp: number): string => {
   const date = new Date(timestamp);
   return date.toLocaleDateString("id-ID", {
@@ -236,6 +227,13 @@ const TemperatureMonitor: React.FC = () => {
     }
   }, [lastFertilizerTime]);
 
+  const latestTemperature =
+    temperatureData.length > 0
+      ? temperatureData[temperatureData.length - 1].y
+      : "N/A";
+  const latestHumidity =
+    humidityData.length > 0 ? humidityData[humidityData.length - 1].y : "N/A";
+
   const handleFertilizerSubmit = () => {
     const now = Date.now();
     setLastFertilizerTime(now);
@@ -243,11 +241,6 @@ const TemperatureMonitor: React.FC = () => {
     localStorage.setItem("lastFertilizerTime", now.toString());
     setIsPopupOpen(false);
   };
-
-  const avgTemperature = calculateAverage(
-    temperatureData.map((data) => data.y)
-  );
-  const avgHumidity = calculateAverage(humidityData.map((data) => data.y));
 
   const tempChartData: ChartData<"line"> = {
     datasets: [
@@ -288,8 +281,8 @@ const TemperatureMonitor: React.FC = () => {
           <Line data={humidityChartData} options={options} />
         </div>
         <div className="flex justify-between text-lg mb-4">
-          <span>Rata-rata Suhu: {avgTemperature}°C</span>
-          <span>Rata-rata Kelembapan: {avgHumidity}%</span>
+          <span>Suhu Terbaru: {latestTemperature}°C</span>
+          <span>Kelembapan Terbaru: {latestHumidity}%</span>
         </div>
         {lastFertilizerDate && (
           <div className="text-lg mb-4">
