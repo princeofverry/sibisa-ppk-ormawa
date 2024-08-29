@@ -1,4 +1,5 @@
 import NavbarDesktop from "@/components/navbar/navbar-desktop";
+import NavMobile from "@/components/navbar/navbar-mobile";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`poppins.className bg-[#EBFFFF]`}>
+        <NavMobile />
         <NavbarDesktop />
         {children}
       </body>
