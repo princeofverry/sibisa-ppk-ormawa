@@ -17,8 +17,8 @@ datasource db {
 model User {
   id           Int      @id @default(autoincrement())
   name         String
-  email        String   @unique
-  numberPhone  String
+  email        String?   @unique
+  numberPhone  String?
   beratSampah  Float    @default(0)
   besi         Float    @default(0)
   kaca         Float    @default(0)

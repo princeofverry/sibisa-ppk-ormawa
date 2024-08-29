@@ -18,7 +18,7 @@ const memilah = () => {
         <div className="border-t-4 border-[#BF5638] w-2/12"></div>
       </div>
       <div>
-        <h1 className="text-[#3C5480] font-medium text-4xl text-center my-8">
+        <h1 className="text-[#3C5480] font-medium md:text-4xl text-2xl text-center my-8">
           Tahapan Memilah <span className="font-bold">Sampah</span>
         </h1>
       </div>
@@ -30,12 +30,12 @@ const memilah = () => {
               value={`item-${index + 1}`}
               className="text-[#122745] bg-[#C9FFFF] border-4 border-blue-400 rounded-2xl p-2 mb-4"
             >
-              <AccordionTrigger className="font-bold text-2xl">
+              <AccordionTrigger className="font-bold md:text-xl text-lg text-left">
                 {item.title}
               </AccordionTrigger>
               <AccordionContent>
                 <hr className="border-t-4 border-[#94B1E8]" />
-                <p className="text-justify text-xl mt-4 text-[#3C5480]">
+                <p className="text-justify md:text-xl text-sm mt-4 text-[#3C5480]">
                   {item.content}
                 </p>
               </AccordionContent>
@@ -44,10 +44,10 @@ const memilah = () => {
         </Accordion>
       </div>
       <div className="flex flex-col items-center text-[#3C5480]">
-        <h1 className="font-medium text-3xl text-center mt-8">
+        <h1 className="font-medium md:text-4xl text-xl text-center mt-8">
           Memilah Sampah <span className="font-bold">Anorganik</span>
         </h1>
-        <p className="text-2xl text-pretty text-justify w-10/12 my-8">
+        <p className="md:text-2xl text-lg text-pretty text-justify w-10/12 my-8">
           SIBISA adalah program berbasis IoT yang dirancang dengan cinta dan
           dedikasi untuk mengelola limbah di Desa Sriwulan. Aplikasi ini
           memonitor pengelolaan limbah anorganik dan fermentasi pupuk kompos
@@ -55,18 +55,18 @@ const memilah = () => {
           menciptakan sistem pengelolaan limbah yang terintegrasi dan efektif,
           memberi manfaat material dan lingkungan bagi masyarakat.
         </p>
-        <p className="text-2xl text-pretty text-justify w-10/12 mb-8">
+        <p className="md:text-2xl text-lg text-pretty text-justify w-10/12 mb-8">
           Sampah anorganik yang telah dipilah dapat diolah dengan prinsip 3R
           (reuse, reduce, dan recycle)
         </p>
       </div>
       <Box3R />
       <div className="z-10 relative mt-20 flex flex-col items-center text-[#3C5480] space-y-8 ">
-        <h1 className=" text-4xl font-medium">
+        <h1 className="md:text-4xl text-2xl font-medium px-4">
           Pengolahan Limbah Organik Atau{" "}
           <span className="font-bold">Fermentasi Pupuk</span>
         </h1>
-        <p className="w-10/12 text-justify text-2xl tracking-wide">
+        <p className="md:w-10/12 px-4 text-justify md:text-2xl text-lg tracking-wide">
           Desa Sriwulan memiliki limbah organik berupa kotoran sapi yang cukup
           menjadi perhatian khusus bagi masyarakat setempat. Penumpukan limbah
           kotoran sapi ternyata menyimpan potensi besar dengan kita alih

@@ -15,12 +15,21 @@ import { ChartData, ChartOptions } from "chart.js";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, remove, get } from "firebase/database";
 import "chartjs-adapter-date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA1JuLSJ93CXaHjrt7ESLcZKhG9dKdYqYo",
   authDomain: "ppkormawa-fa414.firebaseapp.com",
-  databaseURL: "https://ppkormawa-fa414-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ppkormawa-fa414-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ppkormawa-fa414",
   storageBucket: "ppkormawa-fa414.appspot.com",
   messagingSenderId: "305221653321",
@@ -93,9 +102,48 @@ const calculateAverage = (data: number[]): number => {
   return parseFloat((sum / data.length).toFixed(2));
 };
 
+const formatDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const TemperatureMonitor: React.FC = () => {
-  const [temperatureData, setTemperatureData] = useState<{ x: number; y: number }[]>([]);
-  const [humidityData, setHumidityData] = useState<{ x: number; y: number }[]>([]);
+  const [temperatureData, setTemperatureData] = useState<
+    { x: number; y: number }[]
+  >([]);
+  const [humidityData, setHumidityData] = useState<{ x: number; y: number }[]>(
+    []
+  );
+  const [lastFertilizerTime, setLastFertilizerTime] = useState<number | null>(
+    null
+  );
+  const [lastFertilizerDate, setLastFertilizerDate] = useState<string | null>(
+    null
+  );
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  useEffect(() => {
+    const storedFertilizerTime = localStorage.getItem("lastFertilizerTime");
+    if (storedFertilizerTime) {
+      const lastFertilizerTimeMillis = parseInt(storedFertilizerTime, 10);
+      const countdownEnd = lastFertilizerTimeMillis + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+
+      if (Date.now() < countdownEnd) {
+        setLastFertilizerTime(lastFertilizerTimeMillis);
+        setLastFertilizerDate(formatDate(lastFertilizerTimeMillis));
+      } else {
+        localStorage.removeItem("lastFertilizerTime");
+        setIsPopupOpen(true);
+      }
+    } else {
+      setIsPopupOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     const sensorDataRef = ref(database, "/sensorData");
@@ -125,39 +173,80 @@ const TemperatureMonitor: React.FC = () => {
 
     cleanupOldData();
 
-    onValue(sensorDataRef, (snapshot) => {
-      const data = snapshot.val();
+    onValue(
+      sensorDataRef,
+      (snapshot) => {
+        const data = snapshot.val();
 
-      if (data) {
-        const now = Date.now();
-        const threeHoursAgo = now - 3 * 60 * 60 * 1000;
+        if (data) {
+          const now = Date.now();
+          const threeHoursAgo = now - 3 * 60 * 60 * 1000;
 
-        const filteredTemperatureData: { x: number; y: number }[] = [];
-        const filteredHumidityData: { x: number; y: number }[] = [];
+          const filteredTemperatureData: { x: number; y: number }[] = [];
+          const filteredHumidityData: { x: number; y: number }[] = [];
 
-        Object.keys(data).forEach((timestamp) => {
-          const timestampMillis = new Date(timestamp).getTime();
+          Object.keys(data).forEach((timestamp) => {
+            const timestampMillis = new Date(timestamp).getTime();
 
-          if (timestampMillis >= threeHoursAgo && timestampMillis <= now) {
-            filteredTemperatureData.push({ x: timestampMillis, y: data[timestamp].temperature });
-            filteredHumidityData.push({ x: timestampMillis, y: data[timestamp].humidity });
-          }
-        });
+            if (timestampMillis >= threeHoursAgo && timestampMillis <= now) {
+              filteredTemperatureData.push({
+                x: timestampMillis,
+                y: data[timestamp].temperature,
+              });
+              filteredHumidityData.push({
+                x: timestampMillis,
+                y: data[timestamp].humidity,
+              });
+            }
+          });
 
-        console.log("Filtered Temperature Data:", filteredTemperatureData);
-        console.log("Filtered Humidity Data:", filteredHumidityData);
-
-        setTemperatureData(filteredTemperatureData);
-        setHumidityData(filteredHumidityData);
-      } else {
-        console.warn("No data found for the given time range.");
+          setTemperatureData(filteredTemperatureData);
+          setHumidityData(filteredHumidityData);
+        } else {
+          console.warn("No data found for the given time range.");
+        }
+      },
+      (error) => {
+        console.error("Error fetching data:", error);
       }
-    }, (error) => {
-      console.error("Error fetching data:", error);
-    });
+    );
   }, []);
 
-  const avgTemperature = calculateAverage(temperatureData.map((data) => data.y));
+  useEffect(() => {
+    if (lastFertilizerTime) {
+      const countdownEnd = lastFertilizerTime + 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+      const intervalId = setInterval(() => {
+        const remainingTime = countdownEnd - Date.now();
+        console.log(
+          `Countdown: ${Math.max(remainingTime / 1000, 0).toFixed(0)} seconds`
+        );
+
+        if (remainingTime <= 0) {
+          // Hapus semua data setelah 3 hari
+          setTemperatureData([]);
+          setHumidityData([]);
+          setLastFertilizerTime(null);
+          localStorage.removeItem("lastFertilizerTime");
+          setIsPopupOpen(true);
+          clearInterval(intervalId);
+        }
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [lastFertilizerTime]);
+
+  const handleFertilizerSubmit = () => {
+    const now = Date.now();
+    setLastFertilizerTime(now);
+    setLastFertilizerDate(formatDate(now));
+    localStorage.setItem("lastFertilizerTime", now.toString());
+    setIsPopupOpen(false);
+  };
+
+  const avgTemperature = calculateAverage(
+    temperatureData.map((data) => data.y)
+  );
   const avgHumidity = calculateAverage(humidityData.map((data) => data.y));
 
   const tempChartData: ChartData<"line"> = {
@@ -186,29 +275,45 @@ const TemperatureMonitor: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="w-full max-w-xl bg-white rounded-lg shadow-md p-4 md:p-6">
-        <h2 className="text-lg md:text-xl font-semibold mb-4 text-center">
-          Grafik Monitoring Suhu dan Kelembapan
-        </h2>
-
+      <div className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center mb-4">
+          Monitor Suhu dan Kelembapan
+        </h1>
         <div className="mb-6">
-          <div className="h-40 md:h-60">
-            <Line data={tempChartData} options={options} />
-          </div>
-          <p className="text-center mt-2 text-sm md:text-base">
-            Rata-rata Suhu: {avgTemperature}°C
-          </p>
+          <h2 className="text-xl font-semibold mb-2">Grafik Suhu</h2>
+          <Line data={tempChartData} options={options} />
         </div>
-
-        <div>
-          <div className="h-40 md:h-60">
-            <Line data={humidityChartData} options={options} />
-          </div>
-          <p className="text-center mt-2 text-sm md:text-base">
-            Rata-rata Kelembapan: {avgHumidity}%
-          </p>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Grafik Kelembapan</h2>
+          <Line data={humidityChartData} options={options} />
         </div>
+        <div className="flex justify-between text-lg mb-4">
+          <span>Rata-rata Suhu: {avgTemperature}°C</span>
+          <span>Rata-rata Kelembapan: {avgHumidity}%</span>
+        </div>
+        {lastFertilizerDate && (
+          <div className="text-lg mb-4">
+            <span>Pengisian Pupuk Terakhir: {lastFertilizerDate}</span>
+          </div>
+        )}
       </div>
+
+      <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pengingat Pengisian Pupuk</DialogTitle>
+            <DialogDescription>
+              Waktu pengisian pupuk telah berakhir. Silakan isi pupuk untuk
+              memulai periode baru.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleFertilizerSubmit} variant="default">
+              Isi Pupuk
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

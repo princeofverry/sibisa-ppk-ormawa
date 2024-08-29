@@ -15,8 +15,6 @@ export default function FormWithPopover() {
     const newErrors: string[] = [];
 
     if (!name) newErrors.push("Name is required.");
-    if (!email) newErrors.push("Email is required.");
-    if (!phoneNumber) newErrors.push("Phone number is required.");
 
     if (newErrors.length > 0) {
       setErrors(newErrors);
@@ -26,8 +24,8 @@ export default function FormWithPopover() {
     try {
       await axios.post("/api/users", {
         name,
-        email,
-        numberPhone: phoneNumber,
+        email: email || null, // Mengirim null jika email kosong
+        numberPhone: phoneNumber || null, // Mengirim null jika phone number kosong
       });
       setName("");
       setEmail("");
@@ -79,7 +77,7 @@ export default function FormWithPopover() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Email
+                Email (Optional)
               </label>
               <input
                 type="email"
@@ -91,7 +89,7 @@ export default function FormWithPopover() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Phone Number
+                Phone Number (Optional)
               </label>
               <input
                 type="tel"
@@ -103,9 +101,9 @@ export default function FormWithPopover() {
             </div>
             <button
               type="submit"
-              disabled={!name || !email || !phoneNumber}
+              disabled={!name}
               className={`w-full py-2 rounded-md text-white focus:outline-none ${
-                !name || !email || !phoneNumber
+                !name
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:ring-opacity-50"
               }`}
