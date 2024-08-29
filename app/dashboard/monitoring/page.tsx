@@ -310,8 +310,10 @@ const TemperatureMonitor: React.FC = () => {
 
             <Calendar
               mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
+              selected={selectedDate ? selectedDate.toISOString() : null} // Ensure correct format
+              onSelect={(date: any) =>
+                setSelectedDate(date ? new Date(date) : null)
+              } // Handle date selection
               initialFocus
             />
 
