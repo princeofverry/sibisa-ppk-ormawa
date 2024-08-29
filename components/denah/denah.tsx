@@ -9,7 +9,7 @@ const Denah = () => {
         Titik Rumah <span className="font-bold">Digital</span>
       </h1>
       <div className="flex flex-col items-center mt-8">
-        <div className="bg-white px-36 py-8 rounded-2xl shadow-2xl">
+        <div className="bg-white md:px-36 px-4 py-8 rounded-2xl shadow-2xl">
           <Image src={maps} alt="maps" />
         </div>
       </div>

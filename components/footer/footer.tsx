@@ -4,7 +4,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <div className="bg-[#232D40] text-[#D4D5D5] flex lg:flex-row flex-col justify-evenly py-4">
+      <div className="bg-[#232D40] text-[#D4D5D5] flex lg:flex-row md:px-0 px-4 flex-col  justify-evenly py-4 md:space-y-0 space-y-4">
         <div>
           <div className="space-y-2">
             <h1 className="font-bold text-3xl">DESA SRIWULAN</h1>
@@ -12,11 +12,11 @@ const Footer = () => {
           </div>
           <div className="space-y-4 mt-4">
             <h1 className="font-bold text-xl">CONTACT US</h1>
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row text-sm  space-x-2">
               <Instagram color="#ffffff" />
               <p>@ppkormawa_bemftundip</p>
             </div>
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row text-sm space-x-2">
               <Mail color="#ffffff" />
               <p>ppkormawabemftundip2024@gmail.com</p>
             </div>
@@ -53,7 +53,7 @@ const Footer = () => {
         </div>
       </div>
       <div>
-        <h1 className="text-center font-medium text-lg">
+        <h1 className="text-center font-medium md:text-lg text-xs">
           © Copyright 2024 | PPK ORMAWA BEM FT UNDIP
         </h1>
       </div>

@@ -4,10 +4,10 @@ const AkhirKata = () => {
   return (
     <>
       <div className="text-[#3C5480] text-center my-12 flex flex-col items-center">
-        <h1 className="font-medium text-3xl">
+        <h1 className="font-medium md:text-3xl text-2xl">
           Akhir <span className="font-bold">Kata</span>
         </h1>
-        <div className="space-y-8 w-9/12 mt-4 text-2xl text-center text-pretty">
+        <div className="space-y-8 md:w-9/12 mt-4 md:text-2xl text-lg px-4 md:px-0 md:text-center text-justify text-pretty">
           <p>
             Di setiap jejak langkah yang ditinggalkan di tanah Desa Sriwulan,
             ada kisah yang mengalun pelan. Ladang hijau yang membentang, aliran
