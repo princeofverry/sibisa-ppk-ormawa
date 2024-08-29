@@ -13,8 +13,8 @@ import {
 } from "chart.js";
 import { ChartData, ChartOptions } from "chart.js";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, onValue } from "firebase/database";
-import "chartjs-adapter-date-fns"; // Import the date adapter
+import { getDatabase, ref, onValue, remove, get } from "firebase/database";
+import "chartjs-adapter-date-fns";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -43,7 +43,6 @@ ChartJS.register(
   TimeScale
 );
 
-// Options for the chart
 const options: ChartOptions<"line"> = {
   responsive: true,
   plugins: {
@@ -58,12 +57,12 @@ const options: ChartOptions<"line"> = {
   },
   scales: {
     x: {
-      type: "time", // Tetap gunakan "time"
+      type: "time",
       time: {
         unit: "second",
         tooltipFormat: "dd MMM yyyy HH:mm:ss",
         displayFormats: {
-          second: "HH:mm:ss", // Format tampilan untuk sumbu X
+          second: "HH:mm:ss",
         },
       },
       title: {
@@ -71,9 +70,9 @@ const options: ChartOptions<"line"> = {
         text: "Waktu",
       },
       ticks: {
-        autoSkip: true, // Menghindari label yang terlalu banyak
-        maxTicksLimit: 6, // Maksimal label yang ditampilkan
-        stepSize: 10, // Hanya menampilkan label setiap 10 detik
+        autoSkip: true,
+        maxTicksLimit: 6,
+        stepSize: 10,
       },
     },
     y: {
@@ -86,10 +85,9 @@ const options: ChartOptions<"line"> = {
   },
 };
 
-// Function to calculate average
 const calculateAverage = (data: number[]): number => {
   if (!Array.isArray(data) || data.length === 0) {
-    return 0; // Default value if data is not an array or empty
+    return 0;
   }
 
   const sum = data.reduce((acc, value) => acc + value, 0);
@@ -105,41 +103,73 @@ const TemperatureMonitor: React.FC = () => {
   );
 
   useEffect(() => {
-    const tempRef = ref(database, "/sensorData/latestData/temperature");
-    const humidityRef = ref(database, "/sensorData/latestData/humidity");
+    const sensorDataRef = ref(database, "/sensorData");
 
-    const fetchData = () => {
-      const now = new Date().getTime(); // Ambil waktu saat ini dalam milidetik
+    const cleanupOldData = async () => {
+      const now = Date.now();
+      const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
 
-      onValue(tempRef, (snapshot) => {
+      try {
+        const snapshot = await get(sensorDataRef);
         const data = snapshot.val();
-        if (data) {
-          // Tambahkan data baru ke temperatureData
-          setTemperatureData((prevData) => [...prevData, { x: now, y: data }]);
-        }
-      });
 
-      onValue(humidityRef, (snapshot) => {
-        const data = snapshot.val();
         if (data) {
-          // Tambahkan data baru ke humidityData
-          setHumidityData((prevData) => [...prevData, { x: now, y: data }]);
+          Object.keys(data).forEach(async (timestamp) => {
+            const timestampMillis = new Date(timestamp).getTime();
+
+            if (timestampMillis < oneWeekAgo) {
+              // Hapus data yang lebih dari satu minggu
+              await remove(ref(database, `/sensorData/${timestamp}`));
+            }
+          });
         }
-      });
+      } catch (error) {
+        console.error("Error cleaning up old data:", error);
+      }
     };
 
-    fetchData();
+    cleanupOldData();
 
-    const intervalId = setInterval(() => {
-      // Simpan hanya data 1 menit terakhir
-      setTemperatureData((prevData) => prevData.slice(-60));
-      setHumidityData((prevData) => prevData.slice(-60));
-      fetchData();
-    }, 10000); // Fetch data setiap 10 detik
+    onValue(
+      sensorDataRef,
+      (snapshot) => {
+        const data = snapshot.val();
 
-    return () => {
-      clearInterval(intervalId);
-    };
+        if (data) {
+          const now = Date.now();
+          const threeHoursAgo = now - 3 * 60 * 60 * 1000;
+
+          const filteredTemperatureData: { x: number; y: number }[] = [];
+          const filteredHumidityData: { x: number; y: number }[] = [];
+
+          Object.keys(data).forEach((timestamp) => {
+            const timestampMillis = new Date(timestamp).getTime();
+
+            if (timestampMillis >= threeHoursAgo && timestampMillis <= now) {
+              filteredTemperatureData.push({
+                x: timestampMillis,
+                y: data[timestamp].temperature,
+              });
+              filteredHumidityData.push({
+                x: timestampMillis,
+                y: data[timestamp].humidity,
+              });
+            }
+          });
+
+          console.log("Filtered Temperature Data:", filteredTemperatureData);
+          console.log("Filtered Humidity Data:", filteredHumidityData);
+
+          setTemperatureData(filteredTemperatureData);
+          setHumidityData(filteredHumidityData);
+        } else {
+          console.warn("No data found for the given time range.");
+        }
+      },
+      (error) => {
+        console.error("Error fetching data:", error);
+      }
+    );
   }, []);
 
   const avgTemperature = calculateAverage(
@@ -178,7 +208,6 @@ const TemperatureMonitor: React.FC = () => {
           Grafik Monitoring Suhu dan Kelembapan
         </h2>
 
-        {/* Suhu Chart */}
         <div className="mb-6">
           <div className="h-40 md:h-60">
             <Line data={tempChartData} options={options} />
@@ -188,7 +217,6 @@ const TemperatureMonitor: React.FC = () => {
           </p>
         </div>
 
-        {/* Kelembapan Chart */}
         <div>
           <div className="h-40 md:h-60">
             <Line data={humidityChartData} options={options} />

@@ -34,7 +34,7 @@ const NavbarDesktop = () => {
         <div className="flex flex-row items-center justify-center gap-6 p-4 text-lg text-[#3C5480] font-medium">
           <h1>Home</h1>
           <h1>About</h1>
-          <h1>Memilah Sampah</h1>
+          <h1>3R</h1>
           <h1>Denah</h1>
           <Link href="/login">
             <Button className="bg-[#45ADFF] rounded-3xl text-lg hover:bg-[#3090da]">
