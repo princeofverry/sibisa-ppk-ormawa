@@ -7,6 +7,7 @@ import { Search, Trash, UserRound } from "lucide-react";
 import Link from "next/link";
 import FormWithPopover from "@/components/form/form";
 import { ConfirmDeleteModal } from "@/components/deleteModals/DeleteModals";
+import logo from "/public/images/logo-sibisa.png";
 
 interface User {
   id: number;
@@ -70,17 +71,17 @@ const Dashboard: React.FC = () => {
     <div className="bg-[#D4D5D5] h-screen w-full px-4">
       <div className="flex flex-row items-center justify-center md:space-x-56 space-x-8">
         <h1 className="font-bold md:text-4xl text-2xl">Hi, Admin!</h1>
-        <Image src={writing} alt="Writing" />
+        <Image src={logo} alt="Writing" width={200} />
       </div>
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-start">
           <label className="md:text-xl text-lg">
-            Search by name or phone number
+            Pencarian berdasarkan nama
           </label>
           <div className="flex flex-col relative mb-6 w-72">
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Masukkan nama"
               value={searchTerm}
               onChange={handleSearchChange}
               className="bg-blue rounded-xl px-12 py-2 border-2 border-[#3C5480] text-xl"
@@ -97,7 +98,7 @@ const Dashboard: React.FC = () => {
             filteredData.map((item, index) => (
               <div
                 key={index}
-                className="py-3 w-72 px-2 bg-[#BACC58] rounded-xl text-white mb-4"
+                className="py-3 w-72 px-2 bg-[#BACC58] rounded-xl text-black mb-4"
               >
                 <div className="flex flex-row justify-between">
                   <Link href={`dashboard/${item.id}`}>

@@ -23,7 +23,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
   const [kertas, setKertas] = useState<number>(0);
   const [plastik, setPlastik] = useState<number>(0);
   const [sterofoam, setSterofoam] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
+  const [pointsToDeduct, setPointsToDeduct] = useState<number>(0);
 
   const pointRates = {
     besi: 5000,
@@ -32,6 +32,21 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
     plastik: 2000,
     sterofoam: 1000,
   };
+
+  // Fetch user data from the database on component mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/api/users/${decodedSlug}`);
+        const data: User = await response.json();
+        setUser(data); // Set user data including total weight and points
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+      }
+    };
+
+    fetchUser();
+  }, [decodedSlug]);
 
   const calculateTotalPoints = () => {
     return (
@@ -47,47 +62,14 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
     return besi + kaca + kertas + plastik + sterofoam;
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`/api/users/${decodedSlug}`);
-        const data = await response.json();
-        if (response.ok) {
-          setUser(data);
-          setBesi(data.besi || 0);
-          setKaca(data.kaca || 0);
-          setKertas(data.kertas || 0);
-          setPlastik(data.plastik || 0);
-          setSterofoam(data.sterofoam || 0);
-        } else {
-          console.error(data.error);
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [decodedSlug]);
-
   const handleSubmit = async () => {
     if (user) {
+      // Update total weight and points with the new values
       const updatedUser = {
         ...user,
-        besi,
-        kaca,
-        kertas,
-        plastik,
-        sterofoam,
-        totalWeight: calculateTotalWeight(),
-        totalPoints: calculateTotalPoints(),
+        totalWeight: (user.totalWeight || 0) + calculateTotalWeight(),
+        totalPoints: (user.totalPoints || 0) + calculateTotalPoints(),
       };
-
-      setUser(updatedUser);
 
       try {
         await fetch(`/api/users/${user.id}`, {
@@ -97,25 +79,57 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
           },
           body: JSON.stringify(updatedUser),
         });
+
+        // Reset the input fields to 0 after successful submission
+        setBesi(0);
+        setKaca(0);
+        setKertas(0);
+        setPlastik(0);
+        setSterofoam(0);
+
+        // Update user data in the state with the new total weight and points
+        setUser(updatedUser);
       } catch (error) {
         console.error("Failed to update user", error);
       }
     }
   };
 
-  if (loading) {
-    return (
-      <p className="text-center flex flex-col items-center justify-center">
-        Loading...
-      </p>
-    );
-  }
+  const handleDeductPoints = async () => {
+    if (user && pointsToDeduct > 0 && user.totalPoints >= pointsToDeduct) {
+      // Deduct points from the user
+      const updatedUser = {
+        ...user,
+        totalPoints: user.totalPoints - pointsToDeduct,
+      };
+
+      try {
+        await fetch(`/api/users/${user.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUser),
+        });
+
+        // Reset the pointsToDeduct input field after successful deduction
+        setPointsToDeduct(0);
+
+        // Update user data in the state with the new total points
+        setUser(updatedUser);
+      } catch (error) {
+        console.error("Failed to deduct points", error);
+      }
+    } else {
+      alert("Insufficient points or invalid input.");
+    }
+  };
 
   return (
     <div>
       <div className="flex flex-row justify-center items-center px-2">
         <h1 className="md:text-3xl text-2xl font-bold">
-          Update Waste and Points
+          Perbarui Jumlah Sampah & Points
         </h1>
         <Image src={looking} alt="looking" />
       </div>
@@ -135,10 +149,10 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
               </div>
             </div>
             <div className="w-72 mb-4">
-              <h2 className="font-bold mb-2">Waste Input</h2>
+              <h2 className="font-bold mb-2">Jumlah Sampah</h2>
               <div className="bg-[#3C5480] rounded-xl text-black p-4">
                 <div className="flex justify-between mb-2">
-                  <label>Besi (kg):</label>
+                  <label className="text-white">Besi (kg):</label>
                   <input
                     type="number"
                     value={besi}
@@ -147,7 +161,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
                   />
                 </div>
                 <div className="flex justify-between mb-2">
-                  <label>Kaca (kg):</label>
+                  <label className="text-white">Kaca (kg):</label>
                   <input
                     type="number"
                     value={kaca}
@@ -156,7 +170,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
                   />
                 </div>
                 <div className="flex justify-between mb-2">
-                  <label>Kertas (kg):</label>
+                  <label className="text-white">Kertas (kg):</label>
                   <input
                     type="number"
                     value={kertas}
@@ -165,7 +179,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
                   />
                 </div>
                 <div className="flex justify-between mb-2">
-                  <label>Plastik (kg):</label>
+                  <label className="text-white">Plastik (kg):</label>
                   <input
                     type="number"
                     value={plastik}
@@ -174,7 +188,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
                   />
                 </div>
                 <div className="flex justify-between mb-2">
-                  <label>Sterofoam (kg):</label>
+                  <label className="text-white">Sterofoam (kg):</label>
                   <input
                     type="number"
                     value={sterofoam}
@@ -185,24 +199,48 @@ const DetailPage: React.FC<DetailPageProps> = ({ params }) => {
               </div>
             </div>
             <div className="w-72 mb-4">
-              <h2 className="font-bold mb-2">Summary</h2>
-              <div className="bg-[#3C5480] rounded-xl text-white p-4">
-                <div className="flex justify-between mb-2">
-                  <span>Total Weight:</span>
-                  <span>{calculateTotalWeight()} kg</span>
-                </div>
-                <div className="flex justify-between font-bold">
-                  <span>Total Points:</span>
-                  <span>{calculateTotalPoints()} pts</span>
+              <h2 className="font-bold mb-2">Penukaran Poin</h2>
+              <div className="bg-[#3C5480] rounded-xl text-black p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-white">Penukaran Points:</label>
+                  <input
+                    type="number"
+                    value={pointsToDeduct}
+                    onChange={(e) =>
+                      setPointsToDeduct(parseFloat(e.target.value))
+                    }
+                    className="bg-blue rounded-xl px-2 w-24 py-2 border-2 border-[#BACC58]"
+                  />
                 </div>
               </div>
             </div>
-            <Button
-              className="bg-[#BACC58] w-24 hover:bg-[#a1b04d]"
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
+            <div className="w-72 mb-4">
+              <h2 className="font-bold mb-2">Total</h2>
+              <div className="bg-[#3C5480] rounded-xl text-white p-4">
+                <div className="flex justify-between mb-2">
+                  <span>Berat Total</span>
+                  <span>{user.totalWeight || 0} kg</span>
+                </div>
+                <div className="flex justify-between font-bold">
+                  <span>Points Keseluruhan</span>
+                  <span>{user.totalPoints || 0} pts</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <Button
+                className="bg-[#BACC58] w-24 hover:bg-[#a1b04d]"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+              <Button
+                className="bg-[#BACC58] w-24 hover:bg-[#a1b04d]"
+                onClick={handleDeductPoints}
+              >
+                Tukar Points
+              </Button>
+            </div>
           </div>
         ) : (
           <p>User not found</p>

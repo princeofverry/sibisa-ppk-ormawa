@@ -19,7 +19,7 @@ const Navbar = () => {
         <Link href="/dashboard">
           <div className="flex flex-col items-center">
             <House />
-            Home
+            Beranda
           </div>
         </Link>
         <Link href="/dashboard/monitoring">
@@ -31,12 +31,12 @@ const Navbar = () => {
         <Link href="/">
           <div className="flex flex-col items-center">
             <Compass />
-            Explore
+            Menjelajah
           </div>
         </Link>
         <form action={logout} className="flex flex-col items-center">
           <LogOutIcon />
-          <button type="submit">logout</button>
+          <button type="submit">Keluar</button>
         </form>
       </div>
     </div>
