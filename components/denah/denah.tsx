@@ -1,18 +1,18 @@
 import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css"; // Import CSS untuk Leaflet
-import L from "leaflet";
+import L, { Icon } from "leaflet";
 
-// Ikon marker custom (opsional)
-const markerIcon = new L.Icon({
+// Ikon marker custom
+const markerIcon: Icon = new L.Icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
 
-const Denah = () => {
-  const position = [-7.149576801329801, 110.29685356062552]; // Koordinat lokasi
+const Denah: React.FC = () => {
+  const position: [number, number] = [-7.149576801329801, 110.29685356062552]; // Koordinat lokasi
 
   return (
     <>
