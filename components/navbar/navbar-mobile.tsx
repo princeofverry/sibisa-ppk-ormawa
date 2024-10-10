@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const NavMobile = () => {
   const pathname = usePathname();
   const [shouldRender, setShouldRender] = useState(true);
-  // const [showNavbar, setShowNavbar] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   useEffect(() => {
     const isDashboardSlug =
@@ -25,21 +25,20 @@ const NavMobile = () => {
     }
   }, [pathname]);
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if (window.scrollY > 0) {
-  //       setShowNavbar(true);
-  //     } else {
-  //       setShowNavbar(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setShowNavbar(true);
+      } else {
+        setShowNavbar(false);
+      }
+    };
 
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  // if (!shouldRender || !showNavbar) {
-  if (!shouldRender) {
+  if (!shouldRender || !showNavbar) {
     return null;
   }
 
