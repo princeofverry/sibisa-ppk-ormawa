@@ -25,11 +25,8 @@ const Footer = () => {
         <div className="space-y-2">
           <h1 className="font-bold text-3xl">FITUR</h1>
           <ul className="space-y-2">
-            <li>Lorem Ipsum</li>
-            <li>Lorem Ipsum</li>
-            <li>Lorem Ipsum</li>
-            <li>Lorem Ipsum</li>
-            <li>Lorem Ipsum</li>
+            <li>Monitoring</li>
+            <li>Bank Sampah</li>
           </ul>
         </div>
         <div>
