@@ -1,9 +1,9 @@
 import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css"; // Import CSS untuk Leaflet
+import dynamic from "next/dynamic"; // Import dynamic from Next.js
+import "leaflet/dist/leaflet.css"; // Import CSS for Leaflet
 import L, { Icon } from "leaflet";
 
-// Ikon marker custom
+// Custom marker icon
 const markerIcon: Icon = new L.Icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
@@ -11,8 +11,22 @@ const markerIcon: Icon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
+// Dynamically import the MapContainer with SSR disabled
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), {
+  ssr: false,
+});
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), {
+  ssr: false,
+});
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
+
 const Denah: React.FC = () => {
-  const position: [number, number] = [-7.149576801329801, 110.29685356062552]; // Koordinat lokasi
+  const position: [number, number] = [-7.149576801329801, 110.29685356062552]; // Location coordinates
 
   return (
     <>
@@ -20,7 +34,7 @@ const Denah: React.FC = () => {
         Titik Rumah <span className="font-bold">Digital</span>
       </h1>
       <div className="flex flex-col items-center mt-8">
-        <div className="bg-white md:px-36 px-4 py-8 rounded-2xl shadow-2xl w-full h-[500px]"> {/* Pastikan ukuran sesuai */}
+        <div className="bg-white md:px-36 px-4 py-8 rounded-2xl shadow-2xl w-full h-[500px]"> {/* Adjust size accordingly */}
           <MapContainer 
             center={position} 
             zoom={14} 
